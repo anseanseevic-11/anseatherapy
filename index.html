@@ -1,0 +1,1491 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Ansea Therapy — Твой Личный КПТ Стабилизатор</title>
+    <style>
+        /* ПРЕМИУМ МИНИМАЛИСТИЧНЫЙ КОНТРАСТНЫЙ ТЕМНЫЙ ИНТЕРФЕЙС */
+        :root {
+            --bg-base: #09090b;
+            --bg-surface: #141417;
+            --bg-element: #222227;
+            --bg-element-active: #2e2e35;
+            
+            --border-subtle: #2d2d34;
+            --border-strong: #71717a;
+            
+            /* Повышенный контраст для идеальной читаемости */
+            --text-main: #ffffff;
+            --text-muted: #d4d4d8;
+            --text-dark: #a1a1aa;
+            
+            --accent-blue: #3b82f6;
+            --accent-green: #22c55e;
+            --accent-red: #ef4444;
+            --accent-purple: #c084fc;
+            
+            --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            font-family: var(--font-sans);
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            min-height: 100dvh;
+            display: flex;
+            justify-content: center;
+            overflow: hidden;
+            letter-spacing: -0.01em;
+        }
+
+        /* КОНТЕЙНЕР ПРИЛОЖЕНИЯ */
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+            height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-base);
+            position: relative;
+            border-left: 1px solid var(--border-subtle);
+            border-right: 1px solid var(--border-subtle);
+        }
+
+        header {
+            padding: 24px 20px 16px;
+            background: var(--bg-surface);
+            border-bottom: 1px solid var(--border-subtle);
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand-title {
+            font-size: 16px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #ffffff;
+        }
+
+        .system-status-indicator {
+            font-size: 11px;
+            font-family: var(--font-mono);
+            color: #ffffff;
+            background: #22c55e;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .main-scroller {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            padding-bottom: 110px;
+        }
+        .main-scroller::-webkit-scrollbar { display: none; }
+
+        /* КАРТОЧКИ И ПАНЕЛИ */
+        .card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .card-caption {
+            font-size: 12px;
+            font-weight: 700;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            border-bottom: 1px solid var(--border-subtle);
+            padding-bottom: 8px;
+        }
+
+        /* СЕТКА СИМПТОМОВ (МУЛЬТИВЫБОР) */
+        .symptom-matrix-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .symptom-node-btn {
+            background: var(--bg-base);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 14px 12px;
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 600;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            line-height: 1.3;
+        }
+        .symptom-node-btn:hover { border-color: var(--border-strong); color: #ffffff; }
+        .symptom-node-btn.selected {
+            border-color: #ffffff;
+            background: #ffffff;
+            color: #000000;
+            font-weight: 700;
+        }
+
+        /* СЛАЙДЕРЫ */
+        .intensity-slider-container {
+            background: var(--bg-base);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 14px;
+        }
+        .intensity-slider-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            margin-bottom: 12px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+        input[type="range"] {
+            width: 100%;
+            accent-color: #ffffff;
+            background: var(--bg-element);
+            height: 6px;
+            border-radius: 3px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        /* ПОЛЯ ВВОДА ФОРМ */
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .input-group label {
+            font-size: 12px;
+            color: #ffffff;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+        
+        input[type="text"], input[type="number"], select, textarea {
+            width: 100%;
+            background: var(--bg-base);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 14px;
+            color: #ffffff;
+            font-size: 14px;
+            outline: none;
+            line-height: 1.5;
+            transition: border-color 0.15s ease;
+            font-weight: 500;
+        }
+        input[type="text"]::placeholder, textarea::placeholder, input[type="number"]::placeholder {
+            color: #71717a;
+            font-style: italic;
+        }
+        input[type="text"]:focus, select:focus, textarea:focus {
+            border-color: #ffffff;
+        }
+
+        /* СПИСОК ИСКАЖЕНИЙ */
+        .distortions-list-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: var(--bg-base);
+            padding: 14px;
+            border-radius: 8px;
+            border: 1px solid var(--border-subtle);
+        }
+        .distortion-row-label {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            font-size: 13px;
+            cursor: pointer;
+            line-height: 1.4;
+            color: var(--text-muted);
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: 1px solid transparent;
+            transition: all 0.15s ease;
+        }
+        .distortion-row-label:hover { color: #ffffff; border-color: var(--border-subtle); }
+        .distortion-row-label input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .cb-custom-box {
+            width: 20px;
+            height: 20px;
+            min-width: 20px;
+            border: 2px solid var(--border-strong);
+            border-radius: 5px;
+            background: var(--bg-element);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 1px;
+            transition: all 0.15s ease;
+        }
+        .distortion-row-label input[type="checkbox"]:checked + .cb-custom-box {
+            background: #ffffff;
+            border-color: #ffffff;
+        }
+        .distortion-row-label input[type="checkbox"]:checked + .cb-custom-box::after {
+            content: '';
+            width: 5px;
+            height: 9px;
+            border: 2px solid #000000;
+            border-top: none;
+            border-left: none;
+            transform: rotate(45deg) translateY(-1px);
+            display: block;
+        }
+        .distortion-row-label:has(input:checked) {
+            color: #ffffff;
+            border-color: var(--border-strong);
+            background: var(--bg-element);
+        }
+        .distortion-row-label strong { color: #ffffff; font-weight: 700; }
+
+        /* КНОПКИ ДЕЙСТВИЯ */
+        .btn-core {
+            width: 100%;
+            background: var(--bg-element);
+            color: #ffffff;
+            border: 1px solid var(--border-subtle);
+            padding: 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.15s ease;
+        }
+        .btn-core:hover { background: var(--bg-element-active); border-color: var(--border-strong); }
+        .btn-core.primary { background: #ffffff; color: #000000; border-color: #ffffff; }
+        .btn-core.primary:hover { background: #e4e4e7; }
+        .btn-core.danger { color: var(--accent-red); border-color: rgba(239, 68, 68, 0.3); background: rgba(239, 68, 68, 0.05); }
+        .btn-core.danger:hover { background: rgba(239, 68, 68, 0.1); }
+
+        /* ТАЙМЕР */
+        .timer-display-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 24px;
+            background: var(--bg-base);
+            border-radius: 8px;
+            border: 1px solid var(--border-subtle);
+            gap: 20px;
+        }
+        .timer-digits {
+            font-size: 64px;
+            font-weight: 300;
+            font-family: var(--font-mono);
+            color: #ffffff;
+        }
+        .timer-btn-row {
+            display: flex;
+            width: 100%;
+            gap: 8px;
+        }
+
+        /* АРХИВ ЗАПИСЕЙ */
+        .data-record-item {
+            background: var(--bg-base);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            font-size: 14px;
+        }
+        .record-item-meta-top {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--text-dark);
+            font-family: var(--font-mono);
+            border-bottom: 1px solid var(--border-subtle);
+            padding-bottom: 8px;
+            font-weight: bold;
+        }
+        .record-data-line { line-height: 1.5; color: #ffffff; }
+        .record-data-line strong { color: var(--text-dark); font-size: 11px; text-transform: uppercase; display: inline-block; width: 120px; letter-spacing: 0.02em; font-weight: 700; }
+
+        /* КРИЗИСНОЕ ДЫХАНИЕ */
+        .breathing-portal {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 32px 16px;
+            background: var(--bg-base);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            gap: 24px;
+        }
+        .breathing-circle-wrapper {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 2px dashed var(--border-strong);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .breathing-circle-inner {
+            width: 60px;
+            height: 60px;
+            background: #ffffff;
+            border-radius: 50%;
+            transition: all 3.9s ease-in-out;
+            opacity: 0.3;
+        }
+        .breathing-state-text {
+            font-size: 15px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #ffffff;
+        }
+        .breathing-countdown-digit {
+            font-size: 36px;
+            font-family: var(--font-mono);
+            font-weight: 400;
+            color: #ffffff;
+        }
+
+        /* КАНВАСЫ И СТАТИСТИКА */
+        .analytics-viewport-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .canvas-descriptor-label {
+            font-size: 12px;
+            color: #ffffff;
+            text-transform: uppercase;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+        }
+        .canvas-frame-container {
+            width: 100%;
+            height: 220px;
+            background: var(--bg-base);
+            border-radius: 8px;
+            border: 1px solid var(--border-subtle);
+            position: relative;
+        }
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* БАЗА ЗНАНИЙ */
+        .encyclopedia-flow {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .encyclopedia-paragraph {
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-muted);
+        }
+        .encyclopedia-paragraph strong { color: #ffffff; }
+        .encyclopedia-quote-block {
+            background: var(--bg-base);
+            border-left: 3px solid #ffffff;
+            padding: 14px 16px;
+            border-radius: 0 8px 8px 0;
+            font-size: 13.5px;
+            line-height: 1.6;
+            color: #ffffff;
+            font-weight: 500;
+        }
+        .encyclopedia-node-card {
+            background: var(--bg-base);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .encyclopedia-node-title {
+            font-size: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: #ffffff;
+        }
+
+        /* НАВИГАЦИЯ */
+        nav {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 72px;
+            background: var(--bg-surface);
+            border-top: 1px solid var(--border-subtle);
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            z-index: 500;
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        .nav-tab-trigger {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-dark);
+            cursor: pointer;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            gap: 4px;
+            border-top: 2px solid transparent;
+            transition: all 0.15s ease;
+        }
+        .nav-tab-trigger.active {
+            color: #ffffff;
+            background: var(--bg-base);
+            border-top-color: #ffffff;
+        }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <header>
+            <div class="header-row">
+                <div class="brand-title">Ansea Therapy</div>
+                <div class="system-status-indicator" id="db-counter-badge">0 ЛОГОВ</div>
+            </div>
+        </header>
+
+        <div class="main-scroller">
+            
+            <section id="pane-diary">
+                <div class="card">
+                    <div class="card-caption">1. Быстрая фиксация твоего состояния</div>
+                    <p style="font-size: 13px; color: var(--text-dark); line-height: 1.4;">Выбери все пункты, которые ты чувствуешь прямо сейчас (можно выбрать несколько):</p>
+                    <div class="symptom-matrix-grid" id="symptom-matrix">
+                        <button class="symptom-node-btn" data-symptom="Сильная тревога" onclick="app.toggleSymptomNode(this)">Сильная тревога</button>
+                        <button class="symptom-node-btn" data-symptom="Ступор и лень" onclick="app.toggleSymptomNode(this)">Ступор и лень</button>
+                        <button class="symptom-node-btn" data-symptom="Сравнение себя с другими" onclick="app.toggleSymptomNode(this)">Сравнение с другими</button>
+                        <button class="symptom-node-btn" data-symptom="Потеря реальности" onclick="app.toggleSymptomNode(this)">Потеря реальности</button>
+                        <button class="symptom-node-btn" data-symptom="Перфекционизм" onclick="app.toggleSymptomNode(this)">Перфекционизм</button>
+                        <button class="symptom-node-btn" data-symptom="Вспышка злости" onclick="app.toggleSymptomNode(this)">Вспышка злости</button>
+                    </div>
+                    
+                    <div class="intensity-slider-container">
+                        <div class="intensity-slider-header">
+                            <span>Насколько тебе сейчас тяжело?</span>
+                            <span id="slider-numerical-view">5 / 10</span>
+                        </div>
+                        <input type="range" id="input-symptom-intensity" min="0" max="10" value="5" oninput="document.getElementById('slider-numerical-view').textContent = this.value + ' / 10'">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Что конкретно произошло? (Сухой факт)</label>
+                        <input type="text" id="input-symptom-context" placeholder="Например: Столкнулся со сложной задачей, долго нет ответа и т.д.">
+                    </div>
+
+                    <button class="btn-core primary" onclick="app.executeQuickLogSubmission()">Внести запись в историю</button>
+                </div>
+
+                <div class="card">
+                    <div class="card-caption">2. Разбор и деконструкция мысли по полочкам</div>
+                    
+                    <div class="input-group">
+                        <label>Реальная ситуация (Только факты)</label>
+                        <textarea id="proto-situation" rows="2" placeholder="Опиши событие без эмоций, как нейтральный наблюдатель."></textarea>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Какая мысль автоматически вспыхнула в голове?</label>
+                        <textarea id="proto-thought" rows="2" placeholder="Чего именно ты испугался в этот момент? Какая формулировка возникла?"></textarea>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Насколько сильно ты веришь в эту мысль? (От 0 до 10)</label>
+                        <input type="number" id="proto-initial-scale" min="0" max="10" value="5">
+                    </div>
+
+                    <div class="input-group">
+                        <label>В какую ловушку мышления поймал тебя твой мозг?</label>
+                        <div class="distortions-list-stack">
+                            <label class="distortion-row-label"><input type="checkbox" value="Катастрофизация" class="proto-distortion-cb"><span class="cb-custom-box"></span> <span><strong>Катастрофизация:</strong> Ты раскручиваешь самый худший исход, забывая о реальной математической вероятности.</span></label>
+                            <label class="distortion-row-label"><input type="checkbox" value="Черно-белое мышление" class="proto-distortion-cb"><span class="cb-custom-box"></span> <span><strong>Черно-белое мышление:</strong> Либо все идеально, либо полный провал. Ты не видишь средних нормальных вариантов.</span></label>
+                            <label class="distortion-row-label"><input type="checkbox" value="Чтение мыслей" class="proto-distortion-cb"><span class="cb-custom-box"></span> <span><strong>Чтение мыслей:</strong> Ты уверен, что другие люди оценивают тебя негативно, хотя прямых доказательств нет.</span></label>
+                            <label class="distortion-row-label"><input type="checkbox" value="Долженствование" class="proto-distortion-cb"><span class="cb-custom-box"></span> <span><strong>Долженствование:</strong> Жесткие рамки 'я обязан сделать идеально с первого раза', которые вызывают только паралич.</span></label>
+                            <label class="distortion-row-label"><input type="checkbox" value="Сверхобобщение" class="proto-distortion-cb"><span class="cb-custom-box"></span> <span><strong>Сверхобобщение:</strong> Из-за одной мелкой заминки ты делаешь глобальный вывод, что у тебя всегда все плохо.</span></label>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>План на случай худшего сценария (Анти-паника)</label>
+                        <textarea id="proto-worst-case" rows="2" placeholder="Что самое худшее может произойти в реальности? Что конкретно ты сделаешь, если это случится?"></textarea>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Рациональный ответ (Трезвый взгляд на факты)</label>
+                        <textarea id="proto-rational" rows="3" placeholder="Какие реальные факты опровергают твой страх? Как дела обстоят на самом деле?"></textarea>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Микро-действие (Что можно сделать прямо сейчас за 5 минут?)</label>
+                        <input type="text" id="proto-action" placeholder="Какое простое физическое действие продвинет тебя вперед вопреки перфекционизму?">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Насколько теперь ты веришь в пугающую мысль? (От 0 до 10)</label>
+                        <input type="number" id="proto-final-scale" min="0" max="10" value="2">
+                    </div>
+
+                    <button class="btn-core primary" onclick="app.executeFullProtocolSubmission()">Утвердить разбор мысли</button>
+                </div>
+
+                <div class="card">
+                    <div class="card-caption">Твой Архив Протоколов Разбора Мыслей</div>
+                    <div id="mount-diary-archive" style="display: flex; flex-direction: column; gap: 12px;"></div>
+                </div>
+            </section>
+
+            <section id="pane-exposure" class="hidden">
+                <div class="card">
+                    <div class="card-caption">Проверка твоих страхов на практике (Поведенческие Эксперименты)</div>
+                    <p style="font-size: 13.5px; color: var(--text-muted); line-height: 1.5;">
+                        Это способ доказать своему мозгу, что его страхи — иллюзия. Сформулируй пугающую мысль, сделай действие намеренно вопреки ей и запиши, что произошло на самом деле.
+                    </p>
+                    <div class="input-group">
+                        <label>Какой страх / гипотезу мы проверяем?</label>
+                        <input type="text" id="exp-hypo" placeholder="Например: 'Если я сдам работу без тройной проверки, её сразу разнесут'">
+                    </div>
+                    <div class="input-group">
+                        <label>От какого защитного поведения мы отказываемся?</label>
+                        <input type="text" id="exp-safety" placeholder="Например: Бесконечное перечитывание, затягивание отправки">
+                    </div>
+                    <div class="input-group">
+                        <label>Что конкретно нужно сделать (План эксперимента)?</label>
+                        <input type="text" id="exp-plan" placeholder="Например: Отправить файл сразу после первой успешной сборки">
+                    </div>
+                    <div class="input-group">
+                        <label>Что произошло в реальности по факту? (Заполни после выполнения)</label>
+                        <textarea id="exp-result" rows="2" placeholder="Опиши итоговый результат. Подтвердились ли опасения?"></textarea>
+                    </div>
+                    <button class="btn-core primary" onclick="app.executeExperimentSubmission()">Внести Эксперимент в Базу</button>
+                    
+                    <div id="mount-experiments-list" style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;"></div>
+                </div>
+
+                <div class="card">
+                    <div class="card-caption">Таймер Осознанной Экспозиции (Привыкание к дискомфорту)</div>
+                    <p style="font-size: 13.5px; color: var(--text-muted); line-height: 1.5;">
+                        Запусти таймер и просто сиди перед задачей, не сбегая в телефон или прокрастинацию. Через 20-30 минут мозг поймет, что опасности нет, и тревога сама упадет. Таймер стабильно считает время даже при закрытом экране.
+                    </p>
+                    
+                    <div class="timer-display-box">
+                        <div class="input-group" style="width: 100%; text-align: center;" id="timer-setup-interface">
+                            <label>Сколько минут будешь держать фокус?</label>
+                            <input type="number" id="input-timer-minutes" value="10" min="1" max="999" style="text-align: center; font-size: 16px; font-family: var(--font-mono);">
+                        </div>
+                        
+                        <div class="timer-digits" id="timer-ui-clock">10:00</div>
+                        
+                        <div class="timer-btn-row">
+                            <button class="btn-core primary" id="btn-timer-trigger" onclick="app.toggleExposureTimerState()">Старт</button>
+                            <button class="btn-core danger" id="btn-timer-reset" onclick="app.resetExposureTimerEngine()" disabled>Сброс</button>
+                        </div>
+                    </div>
+                    
+                    <div id="exposure-post-validation-card" class="input-group hidden" style="background: var(--bg-base); padding: 14px; border-radius: 8px; border: 1px solid var(--border-subtle);">
+                        <label style="color: var(--accent-green); font-weight: 700; margin-bottom: 8px;">Сессия завершена. Оцени уровень тревоги до и после:</label>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="number" id="exp-scale-before" placeholder="Было (0-10)" min="0" max="10">
+                            <input type="number" id="exp-scale-after" placeholder="Стало (0-10)" min="0" max="10">
+                        </div>
+                        <button class="btn-core primary" style="margin-top: 10px; padding: 10px;" onclick="app.commitExposureSessionToStorage()">Сохранить результат сессии</button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="pane-panic" class="hidden">
+                <div class="card">
+                    <div class="card-caption">Экстренное Квадратное Дыхание (Сброс паники)</div>
+                    <p style="font-size: 13.5px; color: var(--text-muted); line-height: 1.5;">
+                        Когда сильно накрывает или парализует ступор, мозг отключается. Дыши строго по командам ниже. Это физически заставит нервную систему успокоиться и вернуть контроль.
+                    </p>
+                    
+                    <div class="breathing-portal">
+                        <div class="breathing-state-text" id="breath-status-label">Готов к запуску</div>
+                        <div class="breathing-circle-wrapper" id="breath-circle-outer">
+                            <div class="breathing-circle-inner" id="breath-circle-inner"></div>
+                        </div>
+                        <div class="breathing-countdown-digit" id="breath-countdown-ui">-</div>
+                        <button class="btn-core" id="btn-breath-master" onclick="app.toggleBreathingEngine()" style="width: auto; padding: 10px 24px;">Начать дыхание</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-caption">Техника Заземления 5-4-3-2-1 (Выход из панического ступора)</div>
+                    <div class="encyclopedia-flow" style="gap: 12px;">
+                        <p class="encyclopedia-paragraph" style="font-size: 13.5px;">Переключи внимание со страха в голове на реальный физический мир вокруг тебя:</p>
+                        <div class="encyclopedia-node-card"><div class="encyclopedia-node-title">5 Зрительных объектов</div><p class="encyclopedia-paragraph" style="font-size: 13px;">Найди глазами 5 любых мелких предметов (винтик, царапина, провод, грань стола, точка).</p></div>
+                        <div class="encyclopedia-node-card"><div class="encyclopedia-node-title">4 Физических ощущения</div><p class="encyclopedia-paragraph" style="font-size: 13px;">Почувствуй 4 точки контакта тела (как стопы давят на пол, жесткость стула, одежду на плечах).</p></div>
+                        <div class="encyclopedia-node-card"><div class="encyclopedia-node-title">3 Звука</div><p class="encyclopedia-paragraph" style="font-size: 13px;">Вычлени слухом 3 отдельных звука (гул кулера, шум за окном, далекий разговор).</p></div>
+                        <div class="encyclopedia-node-card"><div class="encyclopedia-node-title">2 Запаха</div><p class="encyclopedia-paragraph" style="font-size: 13px;">Улови 2 любых запаха вокруг тебя.</p></div>
+                        <div class="encyclopedia-node-card"><div class="encyclopedia-node-title">1 Вкус</div><p class="encyclopedia-paragraph" style="font-size: 13px;">Почувствуй текущий вкус во рту.</p></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="pane-analytics" class="hidden">
+                <div class="analytics-viewport-card">
+                    <div class="canvas-descriptor-label">История твоей тревоги по дням и часам</div>
+                    <div class="canvas-frame-container">
+                        <canvas id="chart-trend-canvas"></canvas>
+                    </div>
+                </div>
+
+                <div class="analytics-viewport-card">
+                    <div class="canvas-descriptor-label">Твои главные ловушки (что чаще всего происходит)</div>
+                    <div class="canvas-frame-container">
+                        <canvas id="chart-symptoms-canvas"></canvas>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-caption">Управление базой данных (Резервное копирование)</div>
+                    <p style="font-size: 13px; color: var(--text-muted); line-height: 1.5;">
+                        Выгружай свои данные текстом, чтобы сохранить их, или вставляй свой старый бэкап, чтобы ничего не потерялось.
+                    </p>
+                    <textarea id="db-io-textarea" rows="3" style="font-family: var(--font-mono); font-size: 12px; color: #ffffff;" placeholder="Тут появится JSON-массив данных при выгрузке"></textarea>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn-core" style="flex: 1;" onclick="app.exportDatabaseToTextarea()">Выгрузить базу</button>
+                        <button class="btn-core" style="flex: 1;" onclick="app.importDatabaseFromTextarea()">Импортировать</button>
+                    </div>
+                    <button class="btn-core danger" onclick="app.wipeAllLocalApplicationStorage()">Полное удаление всех твоих данных</button>
+                </div>
+            </section>
+
+            <section id="pane-guide" class="hidden">
+                <div class="encyclopedia-flow">
+                    <div class="card">
+                        <div class="card-caption">Фундамент: Что такое КПТ и как это убирает тревогу</div>
+                        <p class="encyclopedia-paragraph">
+                            Когнитивно-поведенческая терапия (КПТ) — это научно доказанный метод тренировки твоего мышления. Главная идея: <strong>тебя пугают и тормозят не сами события, а то, как твой мозг их истолковывает</strong>.
+                        </p>
+                        <div class="encyclopedia-quote-block">
+                            Как мозг создает панику: <br>
+                            <strong>Событие (Нейтральный факт) ➔ Авто-Мысль (Искажение коры) ➔ Тревога (Эмоция) ➔ Ступор или Избегание (Поведение).</strong>
+                        </div>
+                        <p class="encyclopedia-paragraph">
+                            В процессе эволюции мозг научился мгновенно реагировать на любую неопределенность как на смертельную угрозу. Когда ты сталкиваешься со сложной задачей или багом, твоя амигдала (центр страха) выдает автоматическую мысль типа «Я не справлюсь, это провал». Если ты веришь ей на слово, тело выделяет адреналин, начинается паника или паралич воли (прокрастинация). Данное приложение искусственно замедляет этот процесс, помогая тебе перехватить управление и разбить логические ловушки ума с помощью железных фактов.
+                        </p>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-caption">Главное правило: Отделяем Факты от Интерпретаций</div>
+                        <p class="encyclopedia-paragraph">
+                            Твой мозг обожает склеивать реальность со своими страхами и выдавать фантазии за свершившийся факт. Чтобы уничтожить тревогу, нужно научиться хирургически отрезать эмоции от материальных фактов.
+                        </p>
+                        <div class="encyclopedia-node-card">
+                            <div class="encyclopedia-node-title" style="color: var(--accent-red);">Пример склеивания (Как делать не надо):</div>
+                            <p class="encyclopedia-paragraph" style="font-size: 13px; color: #ffffff;">«Я написал отвратительный код, я бездарность, проект полностью сломан, меня ждет позор».</p>
+                        </div>
+                        <div class="encyclopedia-node-card">
+                            <div class="encyclopedia-node-title" style="color: var(--accent-green);">Пример факта (Как нужно фиксировать):</div>
+                            <p class="encyclopedia-paragraph" style="font-size: 13px; color: #ffffff;">«При компиляции скрипта в строке 48 выскочила ошибка. Функция вернула значение undefined».</p>
+                        </div>
+                        <p class="encyclopedia-paragraph">
+                            <strong>Что такое Факт?</strong> Это только то, что может зафиксировать объективная видеокамера. Оценки вроде «плохо», «ужасно», «никогда», «я не смогу» — это просто шум твоего внутреннего критика. Видеокамера видит только строчки на экране, физические действия и время. Отрезай интерпретации и работай только с фактами.
+                        </p>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-caption">Подробный разбор ловушек твоего мышления</div>
+                        <div class="encyclopedia-flow" style="gap: 14px;">
+                            <p class="encyclopedia-paragraph">Ловушки мышления — это системные баги в обработке информации, с помощью которых мозг пытается сэкономить энергию, сваливаясь в панику:</p>
+                            
+                            <div class="encyclopedia-node-card">
+                                <div class="encyclopedia-node-title">1. Катастрофизация</div>
+                                <p class="encyclopedia-paragraph" style="font-size: 13px;">Мозг берет малейшую неопределенность и мгновенно раздувает её до масштабов тотальной катастрофы. Вероятность исхода отбрасывается, и ты начинаешь страдать так, будто худшее уже произошло физически.</p>
+                            </div>
+
+                            <div class="encyclopedia-node-card">
+                                <div class="encyclopedia-node-title">2. Черно-белое мышление</div>
+                                <p class="encyclopedia-paragraph" style="font-size: 13px;">Ты делишь мир только на 0 и 1, на черное и белое. Либо идеальный результат без единой помарки, либо тотальное ничтожество. Из-за этого любое промежуточное рабочее состояние мозг клеймит как провал.</p>
+                            </div>
+
+                            <div class="encyclopedia-node-card">
+                                <div class="encyclopedia-node-title">3. Чтение мыслей</div>
+                                <p class="encyclopedia-paragraph" style="font-size: 13px;">Иллюзия того, что ты точно знаешь, о чем думают другие люди. Ты проецируешь свою неуверенность на них и думаешь, что они замечают каждый твой косяк и мысленно тебя осуждают.</p>
+                            </div>
+
+                            <div class="encyclopedia-node-card">
+                                <div class="encyclopedia-node-title">4. Долженствование</div>
+                                <p class="encyclopedia-paragraph" style="font-size: 13px;">Тирания слов «Я должен» и «Я обязан». Ты выстраиваешь жесткие, нереалистичные правила, которым невозможно соответствовать. Когда реальность ломает эти правила, включается самобичевание и ступор.</p>
+                            </div>
+
+                            <div class="encyclopedia-node-card">
+                                <div class="encyclopedia-node-title">5. Сверхобобщение</div>
+                                <p class="encyclopedia-paragraph" style="font-size: 13px;">Вывод о всей своей жизни или способностях на основе одного изолированного случая. Наткнулся на сложный баг ➔ 'У меня никогда ничего не получается'. Это логическая ошибка.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-caption">Физиология привыкания: Почему побег от задач растит тревогу</div>
+                        <p class="encyclopedia-paragraph">
+                            Главный бензин любого страха, тревоги и ступора — это <strong>избегание</strong>. Когда ты сталкиваешься со сложной задачей и вместо её решения сбегаешь в скроллинг ленты, перекусы или бесконечные откладывания, твой мозг ловит облегчение.
+                        </p>
+                        <p class="encyclopedia-paragraph" style="color: var(--text-dark);">
+                            Это кратковременное облегчение работает как мощный наркотик для амигдалы. Мозг запоминает схему: *«Мы бросили эту сложную задачу, сбежали — и выжили! Значит, задача была смертельно опасна, мы спаслись!»*. Так ты своими руками приучаешь мозг бояться работы еще сильнее.
+                        </p>
+                        <p class="encyclopedia-paragraph">
+                            <strong>Как работает закон Габитуации (Привыкания):</strong> Твое тело физически не способно вырабатывать адреналин бесконечно. Если ты запускаешь таймер, садишься перед задачей и заставляешь себя просто смотреть на неё, не сбегая и не закрывая вкладку, то через 20–30 минут уровень паники физиологически пойдет вниз. Мозг на глубинном уровне перестроится и поймет: *«Мы сидим прямо в эпицентре ситуации, но мы живы, катастрофы нет»*. Экспозиция буквально переписывает старые нейронные связи страха на новые цепочки уверенности.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+        <nav>
+            <div class="nav-tab-trigger active" id="tab-diary" onclick="app.activateTabUnit('diary')">Протокол</div>
+            <div class="nav-tab-trigger" id="tab-exposure" onclick="app.activateTabUnit('exposure')">Действие</div>
+            <div class="nav-tab-trigger" id="tab-panic" onclick="app.activateTabUnit('panic')">Панкаут</div>
+            <div class="nav-tab-trigger" id="tab-analytics" onclick="app.activateTabUnit('analytics')">Статистика</div>
+            <div class="nav-tab-trigger" id="tab-guide" onclick="app.activateTabUnit('guide')">База</div>
+        </nav>
+
+    </div>
+
+    <script>
+        const state = {
+            currentTab: 'diary',
+            selectedSymptoms: [], // Храним массив выбранных симптомов (МУЛЬТИВЫБОР)
+            
+            quickLogs: [],
+            kptProtocols: [],
+            experiments: [],
+            
+            // Архитектура бесконечного фонового таймера экспозиции
+            timerEngineId: null,
+            timerStartTimeStamp: null,
+            timerTotalTargetSeconds: 0,
+            timerAccumulatedSecondsBeforePause: 0,
+            isTimerActive: false,
+
+            // Квадрат дыхания
+            breathIntervalId: null,
+            breathStep: 0, 
+            breathSecondsLeft: 4
+        };
+
+        const app = {
+            init() {
+                this.loadLocalStorageIndexes();
+                this.syncCounterBadgeUI();
+                this.renderDiaryArchiveStack();
+                this.renderExperimentsStack();
+                this.initializeHighDefinitionCharts();
+            },
+
+            loadLocalStorageIndexes() {
+                state.quickLogs = JSON.parse(localStorage.getItem('ans_therapy_quick_logs')) || [];
+                state.kptProtocols = JSON.parse(localStorage.getItem('ans_therapy_protocols')) || [];
+                state.experiments = JSON.parse(localStorage.getItem('ans_therapy_experiments')) || [];
+            },
+
+            saveToLocalStorage() {
+                localStorage.setItem('ans_therapy_quick_logs', JSON.stringify(state.quickLogs));
+                localStorage.setItem('ans_therapy_protocols', JSON.stringify(state.kptProtocols));
+                localStorage.setItem('ans_therapy_experiments', JSON.stringify(state.experiments));
+                this.syncCounterBadgeUI();
+            },
+
+            syncCounterBadgeUI() {
+                const totalCount = state.quickLogs.length + state.kptProtocols.length + state.experiments.length;
+                document.getElementById('db-counter-badge').textContent = `${totalCount} ЛОГОВ`;
+            },
+
+            activateTabUnit(targetTabId) {
+                state.currentTab = targetTabId;
+                ['diary', 'exposure', 'panic', 'analytics', 'guide'].forEach(t => {
+                    document.getElementById(`pane-${t}`).classList.toggle('hidden', t !== targetTabId);
+                    document.getElementById(`tab-${t}`).classList.remove('active');
+                });
+                document.getElementById(`tab-${targetTabId}`).classList.add('active');
+                
+                if (targetTabId === 'analytics') {
+                    setTimeout(() => this.initializeHighDefinitionCharts(), 30);
+                }
+            },
+
+            // ИСПРАВЛЕННЫЙ БАГ: МУЛЬТИВЫБОР СИМПТОМОВ
+            toggleSymptomNode(elementNode) {
+                const symptom = elementNode.getAttribute('data-symptom');
+                const idx = state.selectedSymptoms.indexOf(symptom);
+                
+                if (idx === -1) {
+                    state.selectedSymptoms.push(symptom);
+                    elementNode.classList.add('selected');
+                } else {
+                    state.selectedSymptoms.splice(idx, 1);
+                    elementNode.classList.remove('selected');
+                }
+            },
+
+            getPreciseSystemTimestamp() {
+                const now = new Date();
+                const d = String(now.getDate()).padStart(2, '0');
+                const m = String(now.getMonth() + 1).padStart(2, '0');
+                const y = now.getFullYear();
+                const h = String(now.getHours()).padStart(2, '0');
+                const min = String(now.getMinutes()).padStart(2, '0');
+                return `${d}.${m}.${y} | ${h}:${min}`;
+            },
+
+            executeQuickLogSubmission() {
+                if (state.selectedSymptoms.length === 0) {
+                    alert('Ошибка: Выбери хотя бы один пункт на плитке состояний.');
+                    return;
+                }
+                const val = parseInt(document.getElementById('input-symptom-intensity').value);
+                const ctx = document.getElementById('input-symptom-context').value.trim() || 'Без внешнего контекста';
+                
+                const entry = {
+                    id: Date.now(),
+                    timestamp: new Date().toISOString(),
+                    timeLabel: this.getPreciseSystemTimestamp(),
+                    symptom: state.selectedSymptoms.join(', '),
+                    intensity: val,
+                    context: ctx
+                };
+
+                state.quickLogs.push(entry);
+                this.saveToLocalStorage();
+
+                // Сброс кнопок и полей
+                state.selectedSymptoms = [];
+                document.querySelectorAll('.symptom-node-btn').forEach(b => b.classList.remove('selected'));
+                document.getElementById('input-symptom-intensity').value = 5;
+                document.getElementById('slider-numerical-view').textContent = '5 / 10';
+                document.getElementById('input-symptom-context').value = '';
+
+                alert('Запись успешно добавлена в историю.');
+            },
+
+            executeFullProtocolSubmission() {
+                const sit = document.getElementById('proto-situation').value.trim();
+                const thg = document.getElementById('proto-thought').value.trim();
+                const initScale = parseInt(document.getElementById('proto-initial-scale').value);
+                const worst = document.getElementById('proto-worst-case').value.trim();
+                const rat = document.getElementById('proto-rational').value.trim();
+                const act = document.getElementById('proto-action').value.trim();
+                const finScale = parseInt(document.getElementById('proto-final-scale').value);
+
+                if (!sit || !thg || !rat || !act || !worst) {
+                    alert('Пожалуйста, заполни все поля разбора. Это необходимо для очистки мыслей от искажений.');
+                    return;
+                }
+
+                const distortions = [];
+                document.querySelectorAll('.proto-distortion-cb:checked').forEach(cb => distortions.push(cb.value));
+
+                const protocol = {
+                    id: Date.now(),
+                    timestamp: new Date().toISOString(),
+                    timeLabel: this.getPreciseSystemTimestamp(),
+                    situation: sit,
+                    thought: thg,
+                    initialScale: initScale,
+                    distortions: distortions.length > 0 ? distortions : ['Без явных ловушек ума'],
+                    worstCase: worst,
+                    rational: rat,
+                    action: act,
+                    finalScale: finScale
+                };
+
+                state.kptProtocols.unshift(protocol);
+                
+                // Дублируем в лог тренда, чтобы график сразу отобразил точку
+                state.quickLogs.push({
+                    id: Date.now() + 1,
+                    timestamp: new Date().toISOString(),
+                    timeLabel: protocol.timeLabel,
+                    symptom: 'Разбор Авто-Мысли',
+                    intensity: initScale,
+                    context: sit
+                });
+
+                this.saveToLocalStorage();
+                this.renderDiaryArchiveStack();
+
+                // Очистка формы
+                document.getElementById('proto-situation').value = '';
+                document.getElementById('proto-thought').value = '';
+                document.getElementById('proto-initial-scale').value = 5;
+                document.getElementById('proto-worst-case').value = '';
+                document.getElementById('proto-rational').value = '';
+                document.getElementById('proto-action').value = '';
+                document.getElementById('proto-final-scale').value = 2;
+                document.querySelectorAll('.proto-distortion-cb').forEach(cb => cb.checked = false);
+
+                alert('Разбор мысли завершен и внесен в твой личный архив.');
+            },
+
+            renderDiaryArchiveStack() {
+                const mount = document.getElementById('mount-diary-archive');
+                mount.innerHTML = '';
+
+                if (state.kptProtocols.length === 0) {
+                    mount.innerHTML = '<div style="font-size:13px; color:var(--text-dark); text-align:center; padding:12px 0;">Архив пуст. Сделай свой первый разбор мысли выше.</div>';
+                    return;
+                }
+
+                state.kptProtocols.forEach(p => {
+                    const el = document.createElement('div');
+                    el.className = 'data-record-item';
+                    el.innerHTML = `
+                        <div class="record-item-meta-top">
+                            <span>РАЗБОР ИД: #${p.id.toString().slice(-6)}</span>
+                            <span>${p.timeLabel}</span>
+                        </div>
+                        <div class="record-data-line"><strong>Ситуация:</strong> ${p.situation}</div>
+                        <div class="record-data-line"><strong>Авто-Мысль:</strong> <span style="color:var(--accent-red); font-weight:600;">${p.thought}</span></div>
+                        <div class="record-data-line"><strong>Ловушки ума:</strong> <span style="color:var(--accent-purple); font-weight:600;">${p.distortions.join(', ')}</span></div>
+                        <div class="record-data-line"><strong>План Худшего:</strong> ${p.worstCase}</div>
+                        <div class="record-data-line"><strong>Трезвый Ответ:</strong> <span style="color:#ffffff;">${p.rational}</span></div>
+                        <div class="record-data-line"><strong>Микро-выход:</strong> <span style="color:var(--accent-blue); font-weight:600;">${p.action}</span></div>
+                        <div class="record-data-line"><strong>Тревога упала:</strong> с <span style="color:var(--accent-red); font-weight:700;">${p.initialScale}/10</span> до <span style="color:var(--accent-green); font-weight:700;">${p.finalScale}/10</span></div>
+                        <div style="text-align: right; border-top: 1px solid var(--border-subtle); padding-top:8px; margin-top:4px;">
+                            <span style="color:var(--accent-red); font-size:12px; cursor:pointer; font-weight:700;" onclick="app.deleteProtocolRecord(${p.id})">Удалить запись</span>
+                        </div>
+                    `;
+                    mount.appendChild(el);
+                });
+            },
+
+            deleteProtocolRecord(id) {
+                if (confirm('Удалить этот разбор из архива навсегда?')) {
+                    state.kptProtocols = state.kptProtocols.filter(p => p.id !== id);
+                    this.saveToLocalStorage();
+                    this.renderDiaryArchiveStack();
+                }
+            },
+
+            // ВКЛАДКА 2: ЭКСПЕРИМЕНТЫ
+            executeExperimentSubmission() {
+                const hypo = document.getElementById('exp-hypo').value.trim();
+                const safety = document.getElementById('exp-safety').value.trim();
+                const plan = document.getElementById('exp-plan').value.trim();
+                const res = document.getElementById('exp-result').value.trim();
+
+                if (!hypo || !safety || !plan) {
+                    alert('Заполни базовые поля эксперимента (Какую пугающую мысль проверяем, от какого побега отказываемся и план действий).');
+                    return;
+                }
+
+                const experiment = {
+                    id: Date.now(),
+                    timeLabel: this.getPreciseSystemTimestamp(),
+                    hypothesis: hypo,
+                    safetyBehavior: safety,
+                    experimentalPlan: plan,
+                    result: res || 'Эксперимент запланирован, ждем физического выполнения'
+                };
+
+                state.experiments.unshift(experiment);
+                this.saveToLocalStorage();
+                this.renderExperimentsStack();
+
+                document.getElementById('exp-hypo').value = '';
+                document.getElementById('exp-safety').value = '';
+                document.getElementById('exp-plan').value = '';
+                document.getElementById('exp-result').value = '';
+            },
+
+            executeUpdateExperimentResult(id, txt) {
+                if (!txt.trim()) return;
+                const idx = state.experiments.findIndex(e => e.id === id);
+                if (idx !== -1) {
+                    state.experiments[idx].result = txt.trim();
+                    this.saveToLocalStorage();
+                    this.renderExperimentsStack();
+                }
+            },
+
+            deleteExperimentRecord(id) {
+                if (confirm('Удалить выбранный эксперимент?')) {
+                    state.experiments = state.experiments.filter(e => e.id !== id);
+                    this.saveToLocalStorage();
+                    this.renderExperimentsStack();
+                }
+            },
+
+            renderExperimentsStack() {
+                const mount = document.getElementById('mount-experiments-list');
+                mount.innerHTML = '';
+
+                if (state.experiments.length === 0) {
+                    mount.innerHTML = '<div style="font-size:13px; color:var(--text-dark); text-align:center; padding:12px 0;">Список экспериментов пока пуст.</div>';
+                    return;
+                }
+
+                state.experiments.forEach(e => {
+                    const card = document.createElement('div');
+                    card.className = 'data-record-item';
+                    const isWaiting = e.result.includes('ожидания физического');
+
+                    card.innerHTML = `
+                        <div class="record-item-meta-top">
+                            <span>ЭКСПЕРИМЕНТ ИД: #${e.id.toString().slice(-6)}</span>
+                            <span>${e.timeLabel}</span>
+                        </div>
+                        <div class="record-data-line"><strong>Твой Страх:</strong> ${e.hypothesis}</div>
+                        <div class="record-data-line"><strong>Отказ от:</strong> ${e.safetyBehavior}</div>
+                        <div class="record-data-line"><strong>Что делаем:</strong> <span style="color:var(--accent-blue); font-weight:600;">${e.experimentalPlan}</span></div>
+                        <div class="record-data-line"><strong>Что вышло по факту:</strong> <span style="${isWaiting ? 'color:var(--text-dark); font-style:italic;' : 'color:var(--accent-green); font-weight:600;'}">${e.result}</span></div>
+                        
+                        ${isWaiting ? `
+                            <div style="margin-top: 10px; display:flex; gap:6px;">
+                                <input type="text" placeholder="Напиши реальный факт по итогу" id="input-sub-res-${e.id}" style="padding:10px; font-size:13px;">
+                                <button class="btn-core primary" style="width:auto; padding:0 14px; font-size:12px;" onclick="app.executeUpdateExperimentResult(${e.id}, document.getElementById('input-sub-res-${e.id}').value)">Внести факт</button>
+                            </div>
+                        ` : ''}
+
+                        <div style="text-align: right; border-top: 1px solid var(--border-subtle); padding-top:8px; margin-top:4px;">
+                            <span style="color:var(--accent-red); font-size:12px; cursor:pointer; font-weight:700;" onclick="app.deleteExperimentRecord(${e.id})">Удалить эксперимент</span>
+                        </div>
+                    `;
+                    mount.appendChild(card);
+                });
+            },
+
+            // БЕСКОНЕЧНЫЙ ТАЙМЕР ЭКСПОЗИЦИИ
+            toggleExposureTimerState() {
+                if (state.isTimerActive) {
+                    clearInterval(state.timerEngineId);
+                    state.timerEngineId = null;
+                    state.isTimerActive = false;
+                    
+                    const secondsPassed = Math.floor((Date.now() - state.timerStartTimeStamp) / 1000);
+                    state.timerAccumulatedSecondsBeforePause += secondsPassed;
+
+                    document.getElementById('btn-timer-trigger').textContent = 'Продолжить';
+                } else {
+                    if (state.timerAccumulatedSecondsBeforePause === 0) {
+                        const mins = parseInt(document.getElementById('input-timer-minutes').value);
+                        if (isNaN(mins) || mins <= 0) {
+                            alert('Введи нормальное количество минут.');
+                            return;
+                        }
+                        state.timerTotalTargetSeconds = mins * 60;
+                    }
+
+                    state.timerStartTimeStamp = Date.now();
+                    state.isTimerActive = true;
+                    
+                    document.getElementById('timer-setup-interface').classList.add('hidden');
+                    document.getElementById('btn-timer-trigger').textContent = 'Пауза';
+                    document.getElementById('btn-timer-reset').disabled = false;
+
+                    state.timerEngineId = setInterval(() => {
+                        const elapsed = Math.floor((Date.now() - state.timerStartTimeStamp) / 1000);
+                        const totalSecondsElapsed = state.timerAccumulatedSecondsBeforePause + elapsed;
+                        const timeLeft = state.timerTotalTargetSeconds - totalSecondsElapsed;
+
+                        if (timeLeft <= 0) {
+                            app.triggerTimerCompletionSequence();
+                        } else {
+                            app.updateTimerClockDisplay(timeLeft);
+                        }
+                    }, 200);
+                }
+            },
+
+            resetExposureTimerEngine() {
+                if (state.timerEngineId) clearInterval(state.timerEngineId);
+                state.timerEngineId = null;
+                state.isTimerActive = false;
+                state.timerAccumulatedSecondsBeforePause = 0;
+
+                document.getElementById('timer-setup-interface').classList.remove('hidden');
+                document.getElementById('timer-ui-clock').textContent = "10:00";
+                document.getElementById('btn-timer-trigger').textContent = 'Старт';
+                document.getElementById('btn-timer-reset').disabled = true;
+                document.getElementById('exposure-post-validation-card').classList.add('hidden');
+            },
+
+            updateTimerClockDisplay(totalSeconds) {
+                let m = Math.floor(totalSeconds / 60);
+                let s = totalSeconds % 60;
+                m = m < 10 ? '0' + m : m;
+                s = s < 10 ? '0' + s : s;
+                document.getElementById('timer-ui-clock').textContent = `${m}:${s}`;
+            },
+
+            triggerTimerCompletionSequence() {
+                clearInterval(state.timerEngineId);
+                state.timerEngineId = null;
+                state.isTimerActive = false;
+                state.timerAccumulatedSecondsBeforePause = 0;
+
+                document.getElementById('timer-ui-clock').textContent = "00:00";
+                document.getElementById('btn-timer-trigger').textContent = 'Старт';
+                document.getElementById('exposure-post-validation-card').classList.remove('hidden');
+            },
+
+            commitExposureSessionToStorage() {
+                const b = parseInt(document.getElementById('exp-scale-before').value);
+                const a = parseInt(document.getElementById('exp-scale-after').value);
+
+                if (isNaN(b) || isNaN(a)) {
+                    alert('Заполни цифры тревоги до и после сессии.');
+                    return;
+                }
+
+                state.quickLogs.push({
+                    id: Date.now(),
+                    timestamp: new Date().toISOString(),
+                    timeLabel: this.getPreciseSystemTimestamp(),
+                    symptom: 'Сессия экспозиции',
+                    intensity: b,
+                    context: `Фокус удержан вопреки тревоге. Спад с ${b} до ${a} единиц.`
+                });
+
+                this.saveToLocalStorage();
+                this.resetExposureTimerEngine();
+                
+                document.getElementById('exp-scale-before').value = '';
+                document.getElementById('exp-scale-after').value = '';
+                alert('Сессия экспозиции сохранена в историю.');
+            },
+
+            // КРИЗИСНОЕ КВАДРАТНОЕ ДЫХАНИЕ
+            toggleBreathingEngine() {
+                if (state.breathIntervalId) {
+                    clearInterval(state.breathIntervalId);
+                    state.breathIntervalId = null;
+                    document.getElementById('btn-breath-master').textContent = 'Начать дыхание';
+                    document.getElementById('breath-status-label').textContent = 'Готов к запуску';
+                    document.getElementById('breath-countdown-ui').textContent = '-';
+                    document.getElementById('breath-circle-inner').style.transform = 'scale(1)';
+                    document.getElementById('breath-circle-inner').style.opacity = '0.3';
+                } else {
+                    state.breathStep = 0;
+                    state.breathSecondsLeft = 4;
+                    document.getElementById('btn-breath-master').textContent = 'Остановить';
+                    this.executeBreathingTickLogic();
+                    state.breathIntervalId = setInterval(() => this.executeBreathingTickLogic(), 1000);
+                }
+            },
+
+            executeBreathingTickLogic() {
+                const label = document.getElementById('breath-status-label');
+                const countUi = document.getElementById('breath-countdown-ui');
+                const coreCircle = document.getElementById('breath-circle-inner');
+
+                countUi.textContent = state.breathSecondsLeft;
+
+                if (state.breathStep === 0) {
+                    label.textContent = "Вдох (Глубокий)";
+                    label.style.color = 'var(--accent-blue)';
+                    coreCircle.style.transform = 'scale(2.2)';
+                    coreCircle.style.opacity = '0.8';
+                } else if (state.breathStep === 1) {
+                    label.textContent = "Задержи дыхание";
+                    label.style.color = 'var(--accent-purple)';
+                } else if (state.breathStep === 2) {
+                    label.textContent = "Выдох (Плавный)";
+                    label.style.color = 'var(--accent-green)';
+                    coreCircle.style.transform = 'scale(1)';
+                    coreCircle.style.opacity = '0.3';
+                } else if (state.breathStep === 3) {
+                    label.textContent = "Задержи дыхание";
+                    label.style.color = 'var(--accent-red)';
+                }
+
+                state.breathSecondsLeft--;
+
+                if (state.breathSecondsLeft < 0) {
+                    state.breathSecondsLeft = 4;
+                    state.breathStep = (state.breathStep + 1) % 4;
+                }
+            },
+
+            // ВЫСОКОЧЕТКИЕ ХОЛСТЫ ГРАФИКОВ (ULTRA-HD СЕТКА)
+            setupCanvasHighDefinitionContext(canvasId) {
+                const canvas = document.getElementById(canvasId);
+                const ctx = canvas.getContext('2d');
+                
+                const computedWidth = canvas.clientWidth;
+                const computedHeight = canvas.clientHeight;
+                
+                canvas.width = computedWidth * 2;
+                canvas.height = computedHeight * 2;
+                
+                ctx.scale(2, 2);
+                return { ctx, w: computedWidth, h: computedHeight };
+            },
+
+            initializeHighDefinitionCharts() {
+                this.drawTrendHighDefinitionChart();
+                this.drawSymptomsDensityChart();
+            },
+
+            // ИСПРАВЛЕННЫЙ И ТЕПЕРЬ ПОНЯТНЫЙ ГРАФИК С ВЫВОДОМ ТОЧНОГО ВРЕМЕНИ И ДАТЫ
+            drawTrendHighDefinitionChart() {
+                const setup = this.setupCanvasHighDefinitionContext('chart-trend-canvas');
+                const ctx = setup.ctx;
+                
+                if (state.quickLogs.length === 0) {
+                    ctx.fillStyle = 'var(--text-dark)';
+                    ctx.font = '12px sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('Сделай первую запись в лог, чтобы график ожил.', setup.w / 2, setup.h / 2);
+                    return;
+                }
+
+                const sorted = [...state.quickLogs].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+                
+                const padL = 42;
+                const padR = 25;
+                const padT = 30;
+                const padB = 40; // Больше места внизу для вывода даты и времени
+                
+                const graphW = setup.w - padL - padR;
+                const graphH = setup.h - padT - padB;
+
+                // Заголовок оси Y
+                ctx.save();
+                ctx.fillStyle = '#a1a1aa';
+                ctx.font = '9px monospace';
+                ctx.textAlign = 'center';
+                ctx.translate(10, padT + graphH / 2);
+                ctx.rotate(-Math.PI / 2);
+                ctx.fillText('ТРЕВОГА', 0, 0);
+                ctx.restore();
+
+                // Сетка уровней тяжести — все деления от 0 до 10
+                ctx.strokeStyle = '#222227';
+                ctx.lineWidth = 1;
+                ctx.font = '10px monospace';
+
+                for (let val = 0; val <= 10; val += 2) {
+                    const curY = padT + graphH - (graphH * (val / 10));
+                    
+                    // Горизонтальная линия сетки
+                    ctx.strokeStyle = val === 0 ? '#3a3a42' : '#222227';
+                    ctx.beginPath();
+                    ctx.moveTo(padL, curY);
+                    ctx.lineTo(setup.w - padR, curY);
+                    ctx.stroke();
+                    
+                    // Метка значения
+                    ctx.fillStyle = val === 10 ? '#ef4444' : val >= 7 ? '#f97316' : '#a1a1aa';
+                    ctx.textAlign = 'right';
+                    ctx.fillText(val.toString(), padL - 6, curY + 3);
+                }
+
+                // Кривая линия тренда
+                ctx.beginPath();
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 2;
+                ctx.lineJoin = 'round';
+                ctx.lineCap = 'round';
+
+                sorted.forEach((item, index) => {
+                    const curX = padL + (graphW / (sorted.length > 1 ? sorted.length - 1 : 1)) * index;
+                    const curY = padT + graphH - (graphH * (item.intensity / 10));
+
+                    if (index === 0) ctx.moveTo(curX, curY);
+                    else ctx.lineTo(curX, curY);
+                });
+                ctx.stroke();
+
+                // Отрисовка узлов-точек и точных временных меток прямо под ними!
+                sorted.forEach((item, index) => {
+                    const curX = padL + (graphW / (sorted.length > 1 ? sorted.length - 1 : 1)) * index;
+                    const curY = padT + graphH - (graphH * (item.intensity / 10));
+
+                    // Узел
+                    ctx.fillStyle = item.intensity >= 7 ? 'var(--accent-red)' : '#ffffff';
+                    ctx.beginPath();
+                    ctx.arc(curX, curY, 4, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // ТЕПЕРЬ ПОД КАЖДОЙ ТОЧКОЙ ПИШЕМ ДАТУ И ВРЕМЯ НАГЛЯДНО
+                    ctx.save();
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = '8px monospace';
+                    ctx.textAlign = 'center';
+                    
+                    // Чтобы метки не налезали друг на друга, чередуем высоту вывода для длинных цепочек
+                    const yOffset = (index % 2 === 0) ? (setup.h - 22) : (setup.h - 10);
+                    
+                    // Выделяем только ДД.ММ | ЧЧ:ММ
+                    const labelText = item.timeLabel;
+                    ctx.fillText(labelText, curX, yOffset);
+                    ctx.restore();
+                });
+            },
+
+            drawSymptomsDensityChart() {
+                const setup = this.setupCanvasHighDefinitionContext('chart-symptoms-canvas');
+                const ctx = setup.ctx;
+
+                const dictionary = {};
+                state.quickLogs.forEach(l => {
+                    // Обработка мультивыбора для раздельного подсчета
+                    const splitSymptoms = l.symptom.split(', ');
+                    splitSymptoms.forEach(s => {
+                        dictionary[s] = (dictionary[s] || 0) + 1;
+                    });
+                });
+
+                const categories = Object.keys(dictionary);
+                if (categories.length === 0) {
+                    ctx.fillStyle = 'var(--text-dark)';
+                    ctx.font = '12px sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('Логи пусты. Нет данных для анализа ловушек.', setup.w / 2, setup.h / 2);
+                    return;
+                }
+
+                const maxCount = Math.max(...Object.values(dictionary));
+                const barHeight = 16;
+                const spacing = 12;
+
+                ctx.font = '11px sans-serif';
+                ctx.textAlign = 'left';
+
+                categories.forEach((cat, idx) => {
+                    const currentY = 20 + idx * (barHeight + spacing);
+                    const filledLength = (setup.w - 180) * (dictionary[cat] / maxCount);
+
+                    // Название ловушки ума
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillText(cat.substring(0, 16), 12, currentY + 12);
+
+                    // Фоновая полоса
+                    ctx.fillStyle = '#1c1c21';
+                    ctx.fillRect(130, currentY, setup.w - 180, barHeight);
+
+                    // Заполненная полоса количества
+                    ctx.fillStyle = 'var(--border-strong)';
+                    ctx.fillRect(130, currentY, filledLength, barHeight);
+
+                    // Количество
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = '10px monospace';
+                    ctx.fillText(`[${dictionary[cat]}]`, 136 + filledLength, currentY + 12);
+                    ctx.font = '11px sans-serif';
+                });
+            },
+
+            exportDatabaseToTextarea() {
+                const archive = {
+                    quickLogs: state.quickLogs,
+                    kptProtocols: state.kptProtocols,
+                    experiments: state.experiments
+                };
+                document.getElementById('db-io-textarea').value = JSON.stringify(archive);
+                alert('Данные выгружены в текстовое поле ниже. Скопируй их.');
+            },
+
+            importDatabaseFromTextarea() {
+                const textData = document.getElementById('db-io-textarea').value.trim();
+                if (!textData) {
+                    alert('Ошибка: Поле ввода пусто.');
+                    return;
+                }
+                try {
+                    const parsed = JSON.parse(textData);
+                    if (parsed.quickLogs || parsed.kptProtocols || parsed.experiments) {
+                        state.quickLogs = parsed.quickLogs || [];
+                        state.kptProtocols = parsed.kptProtocols || [];
+                        state.experiments = parsed.experiments || [];
+                        
+                        this.saveToLocalStorage();
+                        this.loadLocalStorageIndexes();
+                        
+                        this.renderDiaryArchiveStack();
+                        this.renderExperimentsStack();
+                        
+                        alert('Все данные успешно импортированы.');
+                    } else {
+                        alert('Неправильный формат данных бэкапа.');
+                    }
+                } catch (err) {
+                    alert('Ошибка чтения данных: ' + err.message);
+                }
+            },
+
+            wipeAllLocalApplicationStorage() {
+                if (confirm('ВНИМАНИЕ: Это полностью очистит все твои записи. Продолжить?')) {
+                    localStorage.clear();
+                    state.quickLogs = [];
+                    state.kptProtocols = [];
+                    state.experiments = [];
+                    this.saveToLocalStorage();
+                    this.init();
+                    this.activateTabUnit('diary');
+                }
+            }
+        };
+
+        window.onload = () => app.init();
+    </script>
+</body>
+</html>
